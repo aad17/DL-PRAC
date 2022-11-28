@@ -1,0 +1,78 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import tensorflow as tf
+
+(X_train, y_train), (X_test, y_test) = tf.keras.datasets.mnist.load_data()
+
+X_train[:5]
+
+y_train[:5]
+
+plt.imshow(X_train[300])
+plt.title(y_train[300])
+
+image_size = X_train.shape[1]
+input_size = image_size * image_size
+input_size
+
+X_train.shape
+
+X_test.shape
+
+np.reshape(X_train, [-1, input_size]).shape
+
+X_train = np.reshape(X_train, [-1, input_size])
+X_test = np.reshape(X_test, [-1, input_size])
+
+X_train = X_train.astype('float32')/255
+
+X_test = X_test.astype('float32')/255
+
+num_labels = len(np.unique(y_train))
+
+num_labels
+
+from sklearn.preprocessing import OneHotEncoder
+enc = OneHotEncoder()
+
+y_train_encoded = enc.fit_transform(y_train.reshape(-1, 1))
+
+y_train_encoded.toarray().tolist()[:10]
+
+y_test_encoded = enc.fit_transform(y_test.reshape(-1, 1))
+
+y_test_encoded.toarray().tolist()[:10]
+
+y_train_encoded = y_train_encoded.toarray()
+y_test_encoded = y_test_encoded.toarray()
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X_train, y_train_encoded)
+
+batch_size = 128
+dropout = 0.45
+hidden_units = 256
+
+from keras.models import Sequential
+from keras.layers import Activation, Dense, Dropout
+
+model = Sequential()
+# Input Layer
+model.add(Dense(hidden_units, input_dim = input_size))
+model.add(Activation('relu'))
+model.add(Dropout(dropout))
+# Second Layer
+model.add(Dense(hidden_units))
+model.add(Activation('relu'))
+model.add(Dropout(dropout))
+# Output Layer
+model.add(Dense(num_labels))
+model.add(Activation('softmax'))
+
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+model.fit(X_train, y_train, epochs=20, batch_size = batch_size)
+
+
