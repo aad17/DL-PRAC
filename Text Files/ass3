@@ -41,4 +41,15 @@ model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy']
 
 model.fit(x = train_set, validation_data = test_set, epochs = 20)
 
-
+import numpy as np
+from keras.preprocessing import image
+test_image = image.load_img('Lab Assignment 3 Dataset/Single Prediction/3.jpg', target_size = (64, 64))
+test_image = image.img_to_array(test_image)
+test_image = np.expand_dims(test_image, axis = 0)
+result = model.predict(test_image)
+if result[0][0] == 1:
+    prediction = 'planes'
+else:
+    prediction = 'cars'
+    
+print(prediction)
